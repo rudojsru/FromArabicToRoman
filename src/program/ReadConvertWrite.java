@@ -15,10 +15,11 @@ import java.util.regex.Pattern;
 
 public class ReadConvertWrite {
 
+    String track = trackToFiles();
+    final String TEXT = track + "/Report.txt";
  //Search all numbers (Arabic) in the Report
-    public static void listModifiPhone() throws IOException {
-        String track= trackToFiles();
-        final String TEXT = track+"/Report.txt";
+    public List<String> listSearchNumbers() throws IOException {
+
         BufferedReader br;
         List<String> numbersFromText = new ArrayList<>();    // here we collect all the numbers from the text
 
@@ -30,7 +31,7 @@ public class ReadConvertWrite {
                 Pattern pattern = Pattern.compile("\\b[\\d]+\\b");  //
                 Matcher matcher = pattern.matcher(searchNumber);
                 while (matcher.find()) {
-                    searchNumber=matcher.group();
+                    searchNumber = matcher.group();
                     numbersFromText.add(searchNumber);    //  add the found number to the List
                 }
             }
@@ -42,6 +43,9 @@ public class ReadConvertWrite {
         } catch (IOException e) {
             e.printStackTrace();
         }
+        return numbersFromText;
+    }
+      public void replacementTextFromArabToRom(List numbersFromText) throws IOException {
 
   // We find the Arabic number in the text and replace it with the Roman one.
         Path path = Paths.get(TEXT);
@@ -51,7 +55,7 @@ public class ReadConvertWrite {
 
         String content = new String(Files.readAllBytes(path), charset);
         for (int i = 0; i <numbersFromText.size() ; i++) {
-            String t1=numbersFromText.get(i);
+            String t1= (String) numbersFromText.get(i);
             String t2= c.arabicToRomo(t1);          // converting arabic numbers to roman
             content = content.replaceFirst(t1, t2);
             Files.write(path2, content.getBytes(charset));
@@ -59,7 +63,7 @@ public class ReadConvertWrite {
 
     }
 
-    public static String trackToFiles() {          //  Track to the place where the file is located
+    public  String trackToFiles() {          //  Track to the place where the file is located
         String track=new File(".").getAbsolutePath();
 
         String [] splitTrack =track.split("");
